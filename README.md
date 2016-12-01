@@ -1,5 +1,3 @@
-# PrePARE_study
-# sabr
-# sabr
-# sabr
-# sabr
+#Sabr
+
+Files for the sabr (Semi-Automatic BIDS restructure) tool.
