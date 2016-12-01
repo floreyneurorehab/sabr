@@ -99,8 +99,7 @@ def sabr_deid(subj_id_df, scan_path_df):
                     try:
                         dcm[hex(tag[0]), hex(tag[1])].value = ''
                     except:
-                        print ''
-                    #   print 'Tag %s %s does not exist in dicom. Moving to next tag' % (hex(tag[0]), hex(tag[1]))
+                        print 'Tag %s %s does not exist in dicom. Moving to next tag' % (hex(tag[0]), hex(tag[1]))
                 
         
                 #Strip aquisition time information
@@ -110,8 +109,7 @@ def sabr_deid(subj_id_df, scan_path_df):
                     try:
                         dcm[hex(tag[0]), hex(tag[1])].value = ''
                     except:
-                        print ''
-                    #    print 'Tag %s %s does not exist in dicom. Moving to next tag' % (hex(tag[0]), hex(tag[1]))
+                         print 'Tag %s %s does not exist in dicom. Moving to next tag' % (hex(tag[0]), hex(tag[1]))
                 
         
                 #Strip physician information
@@ -121,8 +119,7 @@ def sabr_deid(subj_id_df, scan_path_df):
                     try:
                         dcm[hex(tag[0]), hex(tag[1])].value = ''
                     except:
-                        print ''
-                    #    print 'Tag %s %s does not exist in dicom. Moving to next tag' % (hex(tag[0]), hex(tag[1]))
+                        print 'Tag %s %s does not exist in dicom. Moving to next tag' % (hex(tag[0]), hex(tag[1]))
                 
                 
                 #Strip study description
@@ -136,8 +133,7 @@ def sabr_deid(subj_id_df, scan_path_df):
                     try:
                         dcm[hex(tag[0]), hex(tag[1])].value = new_id
                     except:
-                        print ''
-                    #    print 'Tag %s %s does not exist in dicom. Moving to next tag' % (hex(tag[0]), hex(tag[1]))
+                        print 'Tag %s %s does not exist in dicom. Moving to next tag' % (hex(tag[0]), hex(tag[1]))
                 
                 
                 #Strip subject attributes
@@ -148,8 +144,7 @@ def sabr_deid(subj_id_df, scan_path_df):
                     try:
                         dcm[hex(tag[0]), hex(tag[1])].value = ''
                     except:
-                        print ''
-                        #print 'Tag %s %s does not exist in dicom. Moving to next tag' % (hex(tag[0]), hex(tag[1]))
+                        print 'Tag %s %s does not exist in dicom. Moving to next tag' % (hex(tag[0]), hex(tag[1]))
                 
                 
                 #Write anonymised file
