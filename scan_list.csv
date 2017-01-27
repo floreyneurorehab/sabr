@@ -1,0 +1,7 @@
+t1_mpr_1mm_iso_qk,anat
+gre_field_mapping_+30DEG,fieldmap
+LT_HAND_+_30DEG,task1
+LT_HAND_+_30DEG_REPEAT_XXXX,task1repeat
+RT_HAND_+_30DEG,task2
+RESTING+_30DEG_7mins,rest
+diff60_b3000_2.5,DWI
