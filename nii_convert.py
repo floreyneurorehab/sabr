@@ -11,58 +11,53 @@ def sabr_dcm2niix_check():
     try:
         retcode = subprocess.call('dcm2niix', stdout = fnull, stderr = subprocess.STDOUT)
         if retcode == 0:
-            print('\n***dcm2niix installed. Continuing with conversion.***\n')
+            print('\n***dcm2niix installed! Continuing with conversion.***\n')
     except:
-        print('\n***dcm2niix NOT installed. Please place executable in the /bin directory***\n')
+        raise Exception('\n***ERROR! DCM2NIIX NOT PRESENT!***\nPlease place executable in the /bin directory\n')
 
 
 
-def sabr_dcm2niix_convert(subj_deid_main_dir, subj_nii_outdir, new_id, scan_df):
+def sabr_dcm2niix_convert(subj_deid_main_dir, subj_nii_outdir, new_id, scan_df, subj_sessions):
     #First, check the de-id dicom directoy exists
     if os.path.isdir(subj_deid_main_dir) == 0:
-        print('De-identified dicom directory does not exist. Please rerun.')
-        exit()
+        raise Exception('\n***ERROR! DE-IDENTIFIED DICOM DIRECTORY DOES NOT EXIST!***\nPlease rerun SABR.')
         
     #Next, copy de-id folder structure to nii folder
     try:
-        shutil.copytree(subj_deid_main_dir, subj_nii_outdir, ignore = shutil.ignore_patterns('*.nii', '*.nii.gz', '*.mgh')) #Ignore anything with a . in the name (not ideal).
+        shutil.copytree(subj_deid_main_dir, subj_nii_outdir, ignore = shutil.ignore_patterns('*.nii', '*.nii.gz', '*.mgh')) #Ignore anything with extensions .nii(.gz), .mgh, etc. ADD YOUR OWN IF NEEDED!
     except:
-        print('***\nWARNING! NII OUTPUT DIRECTORY ALREADY EXITS!\n***')
-        
-
-    runs = os.listdir(subj_nii_outdir)
-    for run in runs:
-        for scanNo, scantype in enumerate(scan_df['scan_type']):
-            convert_path = os.path.join(subj_nii_outdir, run, scantype)
+        print('***\nWARNING! NII OUTPUT DIRECTORY ALREADY EXISTS!***\nOverwriting.')
+            
+    if len(subj_sessions) == 1:
+        for scanNo, scan_type in enumerate(scan_df['scan_type']):
+            nii_out_path = os.path.join(subj_nii_outdir, scan_type, '')
+            convert_path = os.path.join(subj_nii_outdir, scan_type, scan_df['scan_filename'].iloc[scanNo], '')
+            output_fn = 'sub-' + new_id + '_acq-' + scan_type + '_' + scan_df['scan_filename'].iloc[scanNo]
+            print('\n{}\n'.format(convert_path))
+            print('{}\n'.format(output_fn))
+            os.system('dcm2niix -b y -f ' + output_fn + ' -o ' + nii_out_path + ' '  + convert_path)
+            
+          #Remove dicom directory
             try:
-                dcm_files = os.listdir(convert_path)
+                shutil.rmtree(convert_path)
             except:
-                continue
-            output_fn = 'sub-' + new_id + '_acq-' + scantype + '_' + run + '_' + scan_df['scan_filename'].iloc [scanNo]
-            os.system('dcm2niix -b y -f ' + output_fn + ' ' + convert_path)
+                print('\n***WARNING! {} not present for {}***\nMoving to next sequence.'.format(new_id, scan_df['scan_filename'].iloc[scanNo]))
+                
+    elif len(subj_sessions) > 1:
+        sessions = os.listdir(subj_nii_outdir) #Get directory names of sessions
+        for sess in sessions:
+            for scanNo, scan_type in enumerate(scan_df['scan_type']):
+                nii_out_path = os.path.join(subj_nii_outdir, sess, scan_type, '')
+                convert_path = os.path.join(subj_nii_outdir, sess, scan_type, scan_df['scan_filename'].iloc[scanNo], '')
+                print('\n{}\n'.format(convert_path))
+                output_fn = 'sub-' + new_id + '_acq-' + scan_type + '_' + scan_df['scan_filename'].iloc[scanNo]
+                os.system('dcm2niix -b y -f ' + output_fn + ' -o ' + nii_out_path + ' '  + convert_path)
             
-            #Clean up
-            [os.remove(convert_path + '/' + dcm) for dcm in dcm_files]
-   
-    #Then walk the nii
-    #for root, dr, files in os.walk(subj_nii_outdir):
-        #if files:
-            #print(root)
-            #scan_dir = os.path.split(root)[1]
-            #print(scan_dir)
-            #os.system('dcm2niix -b y -f test%f ' + root) #Using os.system because for some reason subprocess.call refuses to work.
-            #[os.remove(root + '/' + x) for x in files]
-            
-            
-
-    
-    
-
-
-
-    
-
-
-
-
-        
+                #Remove dicom directory
+                try:
+                    shutil.rmtree(convert_path)
+                except:
+                    print('\n***WARNING! {} not present for {}***\nMoving to next sequence.'.format(new_id, scan_df['scan_filename'].iloc[scanNo]))
+                
+    else:
+        raise Exception('\n***ERROR! UNABLE TO FIND DE-IDENTIFIED DICOMS!***\nPlease re-run SABR\n')
