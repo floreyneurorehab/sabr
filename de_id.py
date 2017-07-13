@@ -138,9 +138,9 @@ def sabr_deid(subj_info, scan_df, raw_dir, deid_outdir):
                     try:
                         os.mkdir(subj_deid_sequence_dir) #Make "housing" directory to keep dicoms of different sequences but same meta-category separate.
                     except:
-                        print('aye')
-                        #raise Exception('\n***ERROR! SEQUENCE DIRECTORY ALREADY EXISTS!***\nPlease check all scan_filenames in scan_list are unique.')
-
+                        print('\n***SEQUENCE DIRECTORY ALREADY EXISTS!***\nSkipping.')
+                        continue
+                        
                         
                     #Create list of dicoms in sequence dir rather than use 
                     #files (more control in case any non-dicoms)
@@ -249,8 +249,9 @@ def sabr_deid(subj_info, scan_df, raw_dir, deid_outdir):
                         try:
                             os.mkdir(subj_deid_sequence_dir) #Make "housing" directory to keep dicoms of different sequences but same meta-category separate.
                         except:
-                            print('aye')
-                            #raise Exception('\n***ERROR! SEQUENCE DIRECTORY ALREADY EXISTS!***\nPlease check all scan_filenames in scan_list are unique.')    
+                            print('\n***SEQUENCE DIRECTORY ALREADY EXISTS!***\nSkipping.')
+                            continue
+                            
                             
                         #Create list of dicoms in sequence dir rather than use 
                         #files (more control in case any non-dicoms)
