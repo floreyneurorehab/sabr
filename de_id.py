@@ -18,13 +18,13 @@ def sabr_subj_ss_check(subj_ss):
         try:
             try:
                 subj_df = pd.read_csv(subj_ss, sep = ',')
-                if subj_df.columns[0] != 'sub_name':
-                    raise Exception('\n***ERROR! NON STANDARD OR MISSING COLUMN NAMES!***\nPlease ensure columns are labelled sub_name and sub_id.\n')
+                if subj_df.columns[0] != 'subj_name':
+                    raise Exception('\n***ERROR! NON STANDARD OR MISSING COLUMN NAMES!***\nPlease ensure columns are labelled subj_name and subj_id.\n')
                     return
             except:
                 subj_df = pd.read_csv(subj_ss, sep = '\t')
-                if subj_df.columns[0] != 'sub_name':
-                    raise Exception('\n***ERROR! NON STANDARD OR MISSING COLUMN NAMES!***\nPlease ensure columns are labelled sub_name and sub_id.\n')
+                if subj_df.columns[0] != 'subj_name':
+                    raise Exception('\n***ERROR! NON STANDARD OR MISSING COLUMN NAMES!***\nPlease ensure columns are labelled subj_name and sub_id.\n')
                     return
         except:
             raise Exception('\n***ERROR! UNABLE TO READ FILE!***\nPlease check your file path is correct or ensure your spreadsheet uses either commas (,) or tabbed spaces to separate cells.\n')
@@ -33,8 +33,8 @@ def sabr_subj_ss_check(subj_ss):
     elif subj_ss_type == 'xls':
         try:
             subj_df = pd.read_excel(subj_ss)
-            if subj_df.columns[0] != 'sub_name':
-                raise Exception('\n***ERROR! NON STANDARD OR MISSING COLUMN NAMES!***\nPlease ensure columns are labelled sub_name and sub_id.***\n')
+            if subj_df.columns[0] != 'subj_name':
+                raise Exception('\n***ERROR! NON STANDARD OR MISSING COLUMN NAMES!***\nPlease ensure columns are labelled subj_name and sub_id.***\n')
                 return
         except:
             raise Exception('\n***ERROR! UNABLE TO READ FILE!***\nPlease check the file path is correct or ensure your spreadsheet is an .xlsx file.\n')
@@ -88,12 +88,17 @@ def sabr_deid(subj_info, scan_df, raw_dir, deid_outdir):
 
 
     #Join raw dir with subject name (assumes directory structure is ./rawdir/subj_name/...
-    subj_main_dir = os.path.join(raw_dir, subj_info['sub_name'])
+    subj_main_dir = os.path.join(raw_dir, subj_info['subj_name'])
 
-    new_id = subj_info['sub_id']
+    new_id = subj_info['subj_id']
 
     #Get list of sessions within main subj directory, make dir and loop over sessions.
-    subj_sessions = os.walk(subj_main_dir).next()[1]
+    try:
+        subj_sessions = os.walk(subj_main_dir).next()[1]
+    except:
+        raise Exception('Check name of subject in subject list spread sheet ({}) matches MRI directory name'.format(subj_info['subj_name']))
+        return   
+ 
     subj_sessions.sort()
     
     print('\n***{} has {} session(s)'.format(new_id, len(subj_sessions)))
@@ -108,7 +113,7 @@ def sabr_deid(subj_info, scan_df, raw_dir, deid_outdir):
     
     #WARNING! LAZY CODING AHEAD!    
     if len(subj_sessions) == 0:
-        raise Exception('\n***ERROR! NUMBER OF SESSIONS = 0!***\nPlease check directory structure of {}'.format(subj_info['sub_name']))
+        raise Exception('\n***ERROR! NUMBER OF SESSIONS = 0!***\nPlease check directory structure of {}'.format(subj_info['subj_name']))
         
     elif len(subj_sessions) == 1:
         session = subj_sessions[0]
